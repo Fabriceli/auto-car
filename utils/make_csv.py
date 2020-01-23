@@ -18,8 +18,8 @@ def make_csv_file():
 
     # image_dir = '/root/private/baidu-lane-dect-pytorch/data/Image_Data/'
     # label_dir = '/root/private/baidu-lane-dect-pytorch/data/Gray_Label/'
-    image_dir = '/Users/liyihao/PycharmProjects/baidu-seg-pytorch/data/Image_Data/'
-    label_dir = '/Users/liyihao/PycharmProjects/baidu-seg-pytorch/data/Gray_Label/'
+    image_dir = '/home/aistudio/data/data1919/Image_Data/'
+    label_dir = '/home/aistudio/data/data1919/Gray_Label/'
 
     for s1 in os.listdir(image_dir):
         if s1 == '.DS_Store':
@@ -63,9 +63,9 @@ def make_csv_file():
     train_dataset = save_shuffle[: int(length * 0.8)]
     # val_dataset = save_shuffle[int(length * 0.6): int(length * 0.8)]
     test_dataset = save_shuffle[int(length * 0.8):]
-    train_dataset.to_csv('../data/train_dataset.csv', index=False)
+    train_dataset.to_csv('/home/aistudio/work/auto-car/train_dataset.csv', index=False)
     # train_dataset.to_csv('/root/private/baidu-lane-dect-pytorch/data_list/train_dataset.csv', index=False)
-    test_dataset.to_csv('../data/val_dataset.csv', index=False)
+    test_dataset.to_csv('/home/aistudio/work/auto-car/val_dataset.csv', index=False)
     # test_dataset.to_csv('/root/private/baidu-lane-dect-pytorch/data_list/test_dataset.csv', index=False)
 
 

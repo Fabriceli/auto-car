@@ -38,7 +38,7 @@ class Config(object):
     SAVE_PATH = "logs"
     BASE_LR = 0.001
     NUM_WORKERS = 4
-    DEVICES = [2]
+    DEVICES = [0]
     BATCH_SIZE = 4
     SYNC_BN = None
     LOSS = 'bce+dice'
