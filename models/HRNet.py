@@ -1,8 +1,8 @@
 # -*-coding:utf-8 -*-
 #Reference:**********************************************
-# @Time     : 2019-12-29 12:22
+# @Time     : 2020-01-20 16:29
 # @Author   : Fabrice LI
-# @File     : __init__.py.py
+# @File     : HRNet.py
 # @User     : liyihao
 # @Software : PyCharm
 # @Description: todo

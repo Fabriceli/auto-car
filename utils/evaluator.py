@@ -1,3 +1,13 @@
+# -*-coding:utf-8 -*-
+#Reference:**********************************************
+# @Time     : 2020-01-23 19:17
+# @Author   : Fabrice LI
+# @File     : evaluator.py
+# @User     : liyihao
+# @Software : PyCharm
+# @Description: todo
+#Reference:**********************************************
+
 import numpy as np
 
 
@@ -44,7 +54,3 @@ class Evaluator(object):
 
     def reset(self):
         self.confusion_matrix = np.zeros((self.num_class,) * 2)
-
-
-
-
