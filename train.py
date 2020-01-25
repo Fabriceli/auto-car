@@ -7,6 +7,7 @@
 # @Software : PyCharm
 # @Description: todo
 #Reference:**********************************************
+import os
 import torch
 import argparse
 from tqdm import tqdm
@@ -46,7 +47,7 @@ class Train(object):
                               output_stride=args.out_stride,
                               batch_norm=args.batch_norm,
                               num_classes=args.num_classes,
-                              pretrain=False)
+                              pretrain=True)
         # 初始化优化器
         self.optimizer = torch.optim.SGD(self.model.parameters(),
                                          momentum=args.momentum,
@@ -65,8 +66,8 @@ class Train(object):
 
         # 使用cuda
         if args.cuda:
+            self.model = self.model.cuda(device=args.gpus[0])
             self.model = torch.nn.DataParallel(self.model, device_ids=args.gpus)
-            self.model = self.model.cuda()
 
     def train(self, epoch):
         loss = 0.0
@@ -81,7 +82,7 @@ class Train(object):
             self.scheduler(self.optimizer, i, epoch, 0.0)
             self.optimizer.zero_grad()
             output = self.model(image)
-            loss_function = self.loss(image, label)
+            loss_function = self.loss(output, label)
             loss_function.backward()
             self.optimizer.step()
             loss += loss_function.item()
@@ -96,6 +97,8 @@ class Train(object):
             self.writer.add_scalar('train/total_loss_epoch', loss, epoch)
             print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
             print('Loss: %.3f' % loss)
+        torch.save({'state_dict': self.model.state_dict()},
+                           os.path.join(os.getcwd(), self.args.save_path, "laneNet{}.pth.tar".format(epoch)))
 
     def val(self, epoch):
         self.model.eval()

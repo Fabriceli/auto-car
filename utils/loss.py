@@ -21,11 +21,11 @@ class CELoss(nn.Module):
         self.cuda = cuda
 
     def forward(self, predict, label):
-        if predict.dim() > 2:
-            predict = predict.view(predict.size(0), predict.size(1), -1)  # N,C,H,W => N,C,H*W
-            predict = predict.transpose(1, 2)  # N,C,H*W => N,H*W,C
-            predict = predict.contiguous().view(-1, self.num_class)  # N,H*W,C => N*H*W,C
-        label = label.view(-1)
+        # if predict.dim() > 2:
+        #     predict = predict.view(predict.size(0), predict.size(1), -1)  # N,C,H,W => N,C,H*W
+        #     predict = predict.transpose(1, 2)  # N,C,H*W => N,H*W,C
+        #     predict = predict.contiguous().view(-1, self.num_class)  # N,H*W,C => N*H*W,C
+        # label = label.view(-1)
         # 交叉熵loss默认使用均值模式，reduction='mean'
         loss = nn.CrossEntropyLoss(weight=self.weight, ignore_index=self.ignore_label)
         if self.cuda:

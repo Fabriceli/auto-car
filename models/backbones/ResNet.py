@@ -149,7 +149,7 @@ class ResNet(nn.Module):
 
         # 预训练
         if pretrain:
-            self._pre_train()
+            self.pre_train()
 
     def forward(self, x):
         x1 = self.conv1(x)
@@ -193,8 +193,10 @@ class ResNet(nn.Module):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
-    def _pre_train(self):
-        pretrain_dict = model_zoo.load_url('https://download.pytorch.org/models/resnet101-5d3b4d8f.pth')
+    def pre_train(self):
+        # pretrain_dict = model_zoo.load_url('https://download.pytorch.org/models/resnet101-5d3b4d8f.pth')
+        # pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/resnet101.pth')
+        pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/laneNet7.pth.tar')['state_dict']
         model_dict = {}
         state_dict = self.state_dict()
         for k, v in pretrain_dict.items():
