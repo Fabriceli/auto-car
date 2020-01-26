@@ -29,7 +29,7 @@ class Config(object):
     SHORTCUT_DIM = 48
     SHORTCUT_KERNEL = 1
     NUM_CLASSES = 8
-    BACKBONE = Backbone.RESNET
+    BACKBONE = Backbone.MOBILENET
     CROP_SIZE = [768, 256]
 
     # train config

@@ -10,7 +10,7 @@
 import torch.nn as nn
 from config import Backbone, BatchNorm
 from models.ASPP import build_aspp
-from models.backbones.MobileNet import MobileNet
+from models.backbones.MobileNet import MobileNetV2
 from models.backbones.ResNet import ResNet101
 from models.backbones.Xception import Xception
 
@@ -19,7 +19,7 @@ class Encoder(nn.Module):
     def __init__(self, backbone, output_stride, batch_norm, pretrain):
         super(Encoder, self).__init__()
         if backbone == Backbone.MOBILENET:
-            self.backbone = MobileNet(output_stride, batch_norm, pretrain)
+            self.backbone = MobileNetV2()
         elif backbone == Backbone.XCEPTION:
             self.backbone = Xception(output_stride, batch_norm, pretrain)
         else:
