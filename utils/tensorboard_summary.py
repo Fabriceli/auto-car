@@ -8,6 +8,8 @@
 # @Description: todo
 # Reference:**********************************************
 import os
+import numpy as np
+import torch
 
 from tensorboardX import SummaryWriter
 from torchvision.utils import make_grid
@@ -31,14 +33,18 @@ class TensorboardSummary(object):
         return torch.from_numpy(pred)
 
     def visualize_image(self, writer, image, ground_truth, output_model, global_step):
+        print(ground_truth.shape)
+        print(output_model.shape)
         grid_image = make_grid(image[:3].clone().cpu().data, 3, normalize=True)
         writer.add_image('Image', grid_image, global_step)
+        
+        grid_ground_truth = make_grid(self.get_color_mask(ground_truth.cpu()))
+        writer.add_image('Ground truth', grid_ground_truth, global_step)
 
-        grid_output_model = make_grid(self.get_color_mask(output_model), 3, normalize=False, range=(0, 255))
+        grid_output_model = make_grid(self.get_color_mask(torch.max(output_model[:3], 1)[1].cpu()), 3, normalize=False, range=(0, 255))
         writer.add_image('Predicted', grid_output_model, global_step)
 
-        grid_ground_truth = make_grid(self.get_color_mask(ground_truth))
-        writer.add_image('Ground truth', grid_ground_truth, global_step)
+        
 
 
 if __name__ == '__main__':
