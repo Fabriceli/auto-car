@@ -21,12 +21,15 @@ from utils.dataset import Apolloscapes
 from utils.evaluator import Evaluator
 from utils.loss import CELoss
 from utils.lr_scheduler import LR_Scheduler
+from utils.saver import Saver
 from utils.tensorboard_summary import TensorboardSummary
 
 
 class Train(object):
     def __init__(self, args):
         self.args = args
+        self.saver = Saver(args)
+        self.saver.save_experiment_config()
         # 初始化tensorboard summary
         self.summary = TensorboardSummary(directory=args.save_path)
         self.writer = self.summary.create_summary()
@@ -68,6 +71,7 @@ class Train(object):
         if args.cuda:
             self.model = self.model.cuda(device=args.gpus[0])
             self.model = torch.nn.DataParallel(self.model, device_ids=args.gpus)
+        self.best_pred = 0.0
 
     def train(self, epoch):
         loss = 0.0
@@ -99,6 +103,13 @@ class Train(object):
             print('Loss: %.3f' % loss)
         torch.save({'state_dict': self.model.state_dict()},
                            os.path.join(os.getcwd(), self.args.save_path, "laneNet{}.pth.tar".format(epoch)))
+        is_best = False
+        self.saver.save_checkpoint({
+            'epoch': epoch + 1,
+            'state_dict': self.model.module.state_dict(),
+            'optimizer': self.optimizer.state_dict(),
+            'best_pred': self.best_pred,
+        }, is_best)
 
     def val(self, epoch):
         self.model.eval()
@@ -134,6 +145,16 @@ class Train(object):
         print('Validation:')
         print("Acc:{}, Acc_class:{}, mIoU:{}, fwIoU: {}".format(Acc, Acc_class, mIoU, FWIoU))
         print('Loss: %.3f' % test_loss)
+        new_pred = mIoU
+        if new_pred > self.best_pred:
+            is_best = True
+            self.best_pred = new_pred
+            self.saver.save_checkpoint({
+                'epoch': epoch + 1,
+                'state_dict': self.model.module.state_dict(),
+                'optimizer': self.optimizer.state_dict(),
+                'best_pred': self.best_pred,
+            }, is_best)
 
 
 def main():

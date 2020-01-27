@@ -19,7 +19,7 @@ class Encoder(nn.Module):
     def __init__(self, backbone, output_stride, batch_norm, pretrain):
         super(Encoder, self).__init__()
         if backbone == Backbone.MOBILENET:
-            self.backbone = MobileNetV2()
+            self.backbone = MobileNetV2(output_stride=output_stride, pretrained=pretrain)
         elif backbone == Backbone.XCEPTION:
             self.backbone = Xception(output_stride, batch_norm, pretrain)
         else:
@@ -39,7 +39,7 @@ def build_encoder(backbone, output_stride, batch_norm, pretrain):
 if __name__ == '__main__':
     import torch
 
-    model = Encoder(Backbone.RESNET, 16, BatchNorm.FRN, pretrain=False)
+    model = Encoder(Backbone.MOBILENET, 16, BatchNorm.FRN, pretrain=False)
     input = torch.rand(1, 3, 112, 112)
     low_level_feat, output = model(input)
     print(output.size())

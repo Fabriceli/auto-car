@@ -79,7 +79,7 @@ class InvertedResidual(nn.Module):
 
 
 class MobileNetV2(nn.Module):
-    def __init__(self, output_stride=16, BatchNorm=None, width_mult=1., pretrained=True):
+    def __init__(self, output_stride=16, BatchNorm=nn.BatchNorm2d, width_mult=1., pretrained=True):
         super(MobileNetV2, self).__init__()
         block = InvertedResidual
         input_channel = 32
@@ -129,10 +129,12 @@ class MobileNetV2(nn.Module):
     def forward(self, x):
         low_level_feat = self.low_level_features(x)
         x = self.high_level_features(low_level_feat)
-        return low_level_feat, x
+        return x, low_level_feat
 
     def _load_pretrained_model(self):
-        pretrain_dict = model_zoo.load_url('http://jeff95.me/models/mobilenet_v2-6a65762b.pth')
+        # pretrain_dict = model_zoo.load_url('http://jeff95.me/models/mobilenet_v2-6a65762b.pth')
+        pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/mobilenet_v2.pth')
+        # pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/laneNet7.pth.tar')['state_dict']
         model_dict = {}
         state_dict = self.state_dict()
         for k, v in pretrain_dict.items():
