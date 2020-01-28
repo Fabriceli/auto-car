@@ -133,7 +133,7 @@ class MobileNetV2(nn.Module):
 
     def _load_pretrained_model(self):
         # pretrain_dict = model_zoo.load_url('http://jeff95.me/models/mobilenet_v2-6a65762b.pth')
-        pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/mobilenet_v2.pth')
+        pretrain_dict = torch.load('/root/private/auto-car/models/mobilenet_v2.pth')
         # pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/laneNet7.pth.tar')['state_dict']
         model_dict = {}
         state_dict = self.state_dict()
