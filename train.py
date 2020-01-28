@@ -17,6 +17,7 @@ from torch.utils.data import DataLoader
 
 from config import Config
 from models.DeeplabV3Plus import DeeplabV3Plus
+from models.backbones.UNet import UNet
 from utils.dataset import Apolloscapes
 from utils.evaluator import Evaluator
 from utils.loss import CELoss
@@ -46,11 +47,12 @@ class Train(object):
         self.val_loader = DataLoader(self.val_dataset, batch_size=args.batch_size, shuffle=False, drop_last=False, **kwargs)
 
         # 初始化model
-        self.model = DeeplabV3Plus(backbone=args.backbone,
-                              output_stride=args.out_stride,
-                              batch_norm=args.batch_norm,
-                              num_classes=args.num_classes,
-                              pretrain=True)
+        # self.model = DeeplabV3Plus(backbone=args.backbone,
+        #                       output_stride=args.out_stride,
+        #                       batch_norm=args.batch_norm,
+        #                       num_classes=args.num_classes,
+        #                       pretrain=True)
+        self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=True, pretrain=False)
         # 初始化优化器
         self.optimizer = torch.optim.SGD(self.model.parameters(),
                                          momentum=args.momentum,
@@ -101,15 +103,15 @@ class Train(object):
             self.writer.add_scalar('train/total_loss_epoch', loss, epoch)
             print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
             print('Loss: %.3f' % loss)
-        torch.save({'state_dict': self.model.state_dict()},
-                           os.path.join(os.getcwd(), self.args.save_path, "laneNet{}.pth.tar".format(epoch)))
-        is_best = False
-        self.saver.save_checkpoint({
-            'epoch': epoch + 1,
-            'state_dict': self.model.module.state_dict(),
-            'optimizer': self.optimizer.state_dict(),
-            'best_pred': self.best_pred,
-        }, is_best)
+        # torch.save({'state_dict': self.model.state_dict()},
+        #                    os.path.join(os.getcwd(), self.args.save_path, "laneNet{}.pth.tar".format(epoch)))
+        # is_best = False
+        # self.saver.save_checkpoint({
+        #     'epoch': epoch + 1,
+        #     'state_dict': self.model.module.state_dict(),
+        #     'optimizer': self.optimizer.state_dict(),
+        #     'best_pred': self.best_pred,
+        # }, is_best)
 
     def val(self, epoch):
         self.model.eval()
