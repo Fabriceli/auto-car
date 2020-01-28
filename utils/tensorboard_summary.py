@@ -53,7 +53,7 @@ class TensorboardSummary(object):
     def fusion(self, image, output_model):
         image = image.detach().numpy()
         image = np.array(image[0]).astype(np.uint8)
-        output_model = output_model.numpy()
+        output_model = output_model.detach().numpy()
         output_model = np.array(output_model[0]).astype(np.uint8)
         result = np.array(image * 0.5 + output_model * 0.5, dtype='uint8')
         return torch.from_numpy(result)
