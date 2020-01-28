@@ -47,7 +47,7 @@ class TensorboardSummary(object):
 
         fusion_image = self.fusion(image, output_model)
         grid_fusion_image = make_grid(fusion_image, 3, normalize=False, range=(0, 255))
-        writer.add_image('Predicted', grid_fusion_image, global_step)
+        writer.add_image('Fusion', grid_fusion_image, global_step)
 
     # image output_model: np.array
     def fusion(self, image, output_model):
