@@ -33,8 +33,6 @@ class TensorboardSummary(object):
         return torch.from_numpy(pred)
 
     def visualize_image(self, writer, image, ground_truth, output_model, global_step):
-        print(ground_truth.shape)
-        print(output_model.shape)
         grid_image = make_grid(image[:3].clone().cpu().data, 3, normalize=True)
         writer.add_image('Image', grid_image, global_step)
         
