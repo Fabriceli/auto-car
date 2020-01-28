@@ -54,9 +54,9 @@ class Train(object):
         #                       pretrain=True)
         self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=False, pretrain=False)
         # 初始化优化器
-        self.optimizer = torch.optim.SGD(self.model.parameters(),
-                                         momentum=args.momentum,
-                                         nesterov=args.nesterov,
+        self.optimizer = torch.optim.Adam(self.model.parameters(),
+                                         # momentum=args.momentum,
+                                         # nesterov=args.nesterov,
                                          weight_decay=args.weight_decay,
                                          lr=args.lr)
 
@@ -83,8 +83,8 @@ class Train(object):
         for i, sample in enumerate(data):
             image, label = sample['image'], sample['label']
             if self.args.cuda:
-                image = image.cuda()
-                label = label.cuda()
+                image = image.cuda(device=self.args.gpus[0])
+                label = label.cuda(device=self.args.gpus[0])
             self.scheduler(self.optimizer, i, epoch, 0.0)
             self.optimizer.zero_grad()
             output = self.model(image)
@@ -121,7 +121,7 @@ class Train(object):
         for i, sample in enumerate(tbar):
             image, target = sample['image'], sample['label']
             if self.args.cuda:
-                image, target = image.cuda(), target.cuda()
+                image, target = image.cuda(device=self.args.gpus[0]), target.cuda(device=self.args.gpus[0])
             with torch.no_grad():
                 output = self.model(image)
             loss = self.loss(output, target)
