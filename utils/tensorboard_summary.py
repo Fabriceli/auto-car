@@ -39,11 +39,12 @@ class TensorboardSummary(object):
         grid_ground_truth = make_grid(self.get_color_mask(ground_truth.cpu()))
         writer.add_image('Ground truth', grid_ground_truth, global_step)
 
-        grid_output_model = make_grid(self.get_color_mask(torch.max(output_model[:3], 1)[1].cpu()), 3, normalize=False,
+        output_model_color = self.get_color_mask(torch.max(output_model[:3], 1)[1].cpu())
+        grid_output_model = make_grid(output_model_color, 3, normalize=False,
                                       range=(0, 255))
         writer.add_image('Predicted', grid_output_model, global_step)
 
-        fusion_image = self.fusion(image.cpu(), output_model.cpu())
+        fusion_image = self.fusion(image.cpu(), output_model_color.cpu())
         grid_fusion_image = make_grid(fusion_image, 3, normalize=False, range=(0, 255))
         writer.add_image('Fusion', grid_fusion_image, global_step)
 
