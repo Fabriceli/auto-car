@@ -36,12 +36,12 @@ class Train(object):
         self.writer = self.summary.create_summary()
         # 初始化dataloader
         kwargs = {'num_workers': args.workers, 'pin_memory': True}
-        self.train_dataset = Apolloscapes('train_dataset.csv', '/home/aistudio/data/data1919/Image_Data', '/home/aistudio/data/data1919/Gray_Label',
+        self.train_dataset = Apolloscapes('train_dataset.csv', '/root/private/data/Image_Data', '/root/private/data/Gray_Label',
                                      args.crop_size, type='train')
 
         self.dataloader = DataLoader(self.train_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, **kwargs)
 
-        self.val_dataset = Apolloscapes('val_dataset.csv', '/home/aistudio/data/data1919/Image_Data', '/home/aistudio/data/data1919/Gray_Label',
+        self.val_dataset = Apolloscapes('val_dataset.csv', '/root/private/data/Image_Data', '/root/private/data/Gray_Label',
                                           args.crop_size, type='val')
 
         self.val_loader = DataLoader(self.val_dataset, batch_size=args.batch_size, shuffle=False, drop_last=False, **kwargs)

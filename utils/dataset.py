@@ -279,7 +279,7 @@ if __name__ == '__main__':
     from torch.utils.data import DataLoader
     import matplotlib.pyplot as plt
 
-    data_dir = '../data/train.csv'
+    data_dir = '../data/train_dataset.csv'
 
     apollo_val = Apolloscapes(data_dir, '../data/Image_Data', '../data/Gray_Label', [1024, 384], type='train')
 
@@ -290,7 +290,9 @@ if __name__ == '__main__':
             img = sample['image'].numpy()
             gt = sample['label'].numpy()
             tmp = np.array(gt[jj]).astype(np.uint8)
-            segmap = decode_labels(tmp)
+            segmap = decode_color_labels(tmp)
+            segmap = np.transpose(segmap, axes=[1, 2, 0])
+            segmap = segmap.astype(np.uint8)
             img_tmp = np.transpose(img[jj], axes=[1, 2, 0])
             img_tmp = img_tmp.astype(np.uint8)
             plt.figure()

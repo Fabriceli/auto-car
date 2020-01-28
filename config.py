@@ -33,7 +33,7 @@ class Config(object):
     CROP_SIZE = [768, 256]
 
     # train config
-    EPOCHS = 8
+    EPOCHS = 25
     WEIGHT_DECAY = 5.0e-4
     SAVE_PATH = "logs"
     BASE_LR = 0.001
