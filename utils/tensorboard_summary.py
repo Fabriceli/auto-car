@@ -51,7 +51,7 @@ class TensorboardSummary(object):
 
     # image output_model: np.array
     def fusion(self, image, output_model):
-        image = image.numpy()
+        image = image.detach().numpy()
         image = np.array(image[0]).astype(np.uint8)
         output_model = output_model.numpy()
         output_model = np.array(output_model[0]).astype(np.uint8)
