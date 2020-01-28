@@ -47,12 +47,12 @@ class Train(object):
         self.val_loader = DataLoader(self.val_dataset, batch_size=args.batch_size, shuffle=False, drop_last=False, **kwargs)
 
         # 初始化model
-        # self.model = DeeplabV3Plus(backbone=args.backbone,
-        #                       output_stride=args.out_stride,
-        #                       batch_norm=args.batch_norm,
-        #                       num_classes=args.num_classes,
-        #                       pretrain=True)
-        self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=False, pretrain=False)
+        self.model = DeeplabV3Plus(backbone=args.backbone,
+                              output_stride=args.out_stride,
+                              batch_norm=args.batch_norm,
+                              num_classes=args.num_classes,
+                              pretrain=True)
+        # self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=False, pretrain=False)
         # 初始化优化器
         self.optimizer = torch.optim.Adam(self.model.parameters(),
                                          # momentum=args.momentum,
