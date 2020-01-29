@@ -47,7 +47,7 @@ class Apolloscapes(data.Dataset):
             return sample
         else:
             raise NotImplementedError
-        return sample
+        return sample, image_path, label_path
 
     def __len__(self):
         return len(self.train_list)
@@ -279,13 +279,19 @@ if __name__ == '__main__':
     from torch.utils.data import DataLoader
     import matplotlib.pyplot as plt
 
-    data_dir = '../data/train.csv'
+    data_dir = '../data/train_dataset.csv'
 
     apollo_val = Apolloscapes(data_dir, '../data/Image_Data', '../data/Gray_Label', [1024, 384], type='train')
 
     dataloader = DataLoader(apollo_val, batch_size=4, shuffle=True, num_workers=0)
 
-    for ii, sample in enumerate(dataloader):
+    for ii, sample_all in enumerate(dataloader):
+        sample = sample_all[0]
+        image_path = sample_all[1]
+        label_path = sample_all[2]
+        image, label = sample['image'], sample['label']
+        # print(image_path)
+        # print(label_path)
         for jj in range(sample["image"].size()[0]):
             img = sample['image'].numpy()
             gt = sample['label'].numpy()
@@ -296,9 +302,13 @@ if __name__ == '__main__':
             plt.figure()
             plt.title('display')
             plt.subplot(211)
+            print(str(ii) + " : " + image_path[ii])
             plt.imshow(img_tmp)
             plt.subplot(212)
+            print(str(ii) + " : " + label_path[ii])
             plt.imshow(segmap)
+            if jj == 3:
+                break
 
         if ii == 1:
             break

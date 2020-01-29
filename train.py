@@ -75,12 +75,15 @@ class Train(object):
             self.model = torch.nn.DataParallel(self.model, device_ids=args.gpus)
         self.best_pred = 0.0
 
-    def train(self, epoch):
+    def train(self, epoch, trainF):
         loss = 0.0
         self.model.train()
         data = tqdm(self.dataloader)
         length = len(self.dataloader)
-        for i, sample in enumerate(data):
+        for i, sample_list in enumerate(data):
+            sample = sample_list[0]
+            image_path = sample_list[1]
+            label_path = sample_list[2]
             image, label = sample['image'], sample['label']
             if self.args.cuda:
                 image = image.cuda(device=self.args.gpus[0])
@@ -92,7 +95,11 @@ class Train(object):
             loss_function.backward()
             self.optimizer.step()
             loss += loss_function.item()
-
+            # Add batch sample into evaluator
+            pred = output.data.cpu().numpy()
+            target = label.cpu().numpy()
+            pred = np.argmax(pred, axis=1)
+            self.evaluator.add_batch(target, pred)
             data.set_description('Train loss: %.3f' % (loss / (i + 1)))
             self.writer.add_scalar('train/total_loss_iter', loss_function.item(), i + length * epoch)
 
@@ -103,22 +110,24 @@ class Train(object):
             self.writer.add_scalar('train/total_loss_epoch', loss, epoch)
             print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
             print('Loss: %.3f' % loss)
-        # torch.save({'state_dict': self.model.state_dict()},
-        #                    os.path.join(os.getcwd(), self.args.save_path, "laneNet{}.pth.tar".format(epoch)))
-        # is_best = False
-        # self.saver.save_checkpoint({
-        #     'epoch': epoch + 1,
-        #     'state_dict': self.model.module.state_dict(),
-        #     'optimizer': self.optimizer.state_dict(),
-        #     'best_pred': self.best_pred,
-        # }, is_best)
+            mIoU = self.evaluator.Mean_Intersection_over_Union()
+            print('train miou: %.3f' % mIoU)
+            new_pred = mIoU
+            if epoch != 0:
+                if new_pred < self.best_pred:
+                    trainF.write("IMAGE: {}, LABEL: {} \n".format(image_path[i], label_path[i]))
+                    trainF.flush()
+
 
     def val(self, epoch):
         self.model.eval()
         self.evaluator.reset()
         tbar = tqdm(self.val_loader, desc='\r')
         test_loss = 0.0
-        for i, sample in enumerate(tbar):
+        for i, sample_list in enumerate(tbar):
+            sample = sample_list[0]
+            # image_path = sample_list[1]
+            # label_path = sample_list[2]
             image, target = sample['image'], sample['label']
             if self.args.cuda:
                 image, target = image.cuda(device=self.args.gpus[0]), target.cuda(device=self.args.gpus[0])
@@ -201,10 +210,12 @@ def main():
         else:
             args.sync_bn = False
     trainer = Train(args)
+    trainF = open(os.path.join(args.save_path, "train.csv"), 'w')
     for epoch in range(args.epochs):
-        trainer.train(epoch)
+        trainer.train(epoch, trainF)
         trainer.val(epoch)
     trainer.writer.close()
+    trainF.close()
 
 
 if __name__ == '__main__':
