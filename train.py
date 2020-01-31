@@ -78,6 +78,7 @@ class Train(object):
     def train(self, epoch, trainF):
         loss = 0.0
         self.model.train()
+        self.evaluator.reset()
         data = tqdm(self.dataloader)
         length = len(self.dataloader)
         for i, sample_list in enumerate(data):
