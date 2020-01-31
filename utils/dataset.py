@@ -44,7 +44,7 @@ class Apolloscapes(data.Dataset):
         elif self.type == 'val':
             sample = transform_val(sample, self.crop_size)
         elif not self.type:
-            return sample
+            return sample, image_path, label_path
         else:
             raise NotImplementedError
         return sample
