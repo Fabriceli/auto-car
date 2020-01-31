@@ -117,9 +117,9 @@ class UNet(nn.Module):
                 m.bias.data.zero_()
 
     def pretrain(self):
-        pretrain_dict = model_zoo.load_url('http://jeff95.me/models/mobilenet_v2-6a65762b.pth')
+        # pretrain_dict = model_zoo.load_url('http://jeff95.me/models/mobilenet_v2-6a65762b.pth')
         # pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/mobilenet_v2.pth')
-        # pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/laneNet7.pth.tar')['state_dict']
+        pretrain_dict = torch.load('/home/aistudio/work/auto-car/models/models/mobilenet_0.3749_768x256.pth.tar')['state_dict']
         model_dict = {}
         state_dict = self.state_dict()
         for k, v in pretrain_dict.items():

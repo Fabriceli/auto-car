@@ -52,7 +52,7 @@ class Train(object):
         #                       batch_norm=args.batch_norm,
         #                       num_classes=args.num_classes,
         #                       pretrain=True)
-        self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=False, pretrain=False)
+        self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=False, pretrain=True)
         self.optimizer = torch.optim.Adam(self.model.parameters(),
                                           # momentum=args.momentum,
                                           # nesterov=args.nesterov,
