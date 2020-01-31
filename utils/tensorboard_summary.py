@@ -10,6 +10,7 @@
 import os
 import numpy as np
 import torch
+import cv2
 
 from tensorboardX import SummaryWriter
 from torchvision.utils import make_grid
@@ -53,9 +54,8 @@ class TensorboardSummary(object):
         image = image.detach().numpy()
         image = np.array(image[0]).astype(np.uint8)
         output_model = output_model.detach().numpy()
-        output_model = np.array(output_model[0]).astype(np.uint8)
-        result = np.array(image * 0.5 + output_model * 0.5, dtype='uint8')
-        return torch.from_numpy(result)
+        image_add = cv2.addWeighted(image, alpha=0.5, src2=output_model, beta=0.5, gamma=0)
+        return torch.from_numpy(image_add)
 
 
 if __name__ == '__main__':
