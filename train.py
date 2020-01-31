@@ -114,7 +114,7 @@ class Train(object):
             print('train miou: %.3f' % mIoU)
             new_pred = mIoU
             if epoch != 0:
-                if float(new_pred) - float(self.best_pred) >= 0.5:
+                if float(new_pred) - float(self.best_pred) >= 0.5 and i < self.args.batch_size:
                     trainF.write("{}, {}, new_pred: {}, best_pred: {} \n".format(image_path[i], label_path[i],
                                                                                  new_pred, self.best_pred))
                     trainF.flush()
