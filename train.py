@@ -52,7 +52,7 @@ class Train(object):
         #                       batch_norm=args.batch_norm,
         #                       num_classes=args.num_classes,
         #                       pretrain=True)
-        self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=False, pretrain=True)
+        self.model = UNet(in_planes=3, n_class=args.num_classes, padding=1, bilinear=False, pretrain=False)
         self.optimizer = torch.optim.Adam(self.model.parameters(),
                                           # momentum=args.momentum,
                                           # nesterov=args.nesterov,
@@ -114,7 +114,7 @@ class Train(object):
             print('train miou: %.3f' % mIoU)
             new_pred = mIoU
             if epoch != 0:
-                if float(new_pred) - float(self.best_pred) >= 0.5 and i < self.args.batch_size:
+                if (float(new_pred) - float(self.best_pred)) / self.best_pred >= 0.5 and i < self.args.batch_size:
                     trainF.write("{}, {}, new_pred: {}, best_pred: {} \n".format(image_path[i], label_path[i],
                                                                                  new_pred, self.best_pred))
                     trainF.flush()
