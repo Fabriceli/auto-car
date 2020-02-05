@@ -12,18 +12,32 @@ import torch.nn.functional as F
 from torch.utils import model_zoo
 import torch
 
+from config import BatchNorm
+from utils.FRN import FilterResponseNorm2d
+from utils.TLU import TLU
+
 
 class BasicNet(nn.Module):
-    def __init__(self, in_planes, out_planes, padding):
+    def __init__(self, in_planes, out_planes, padding, batch_norm=BatchNorm.FRN):
         super(BasicNet, self).__init__()
-        self.double_conv = nn.Sequential(
-            nn.Conv2d(in_planes, out_planes, kernel_size=3, padding=padding),
-            nn.BatchNorm2d(out_planes),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_planes, out_planes, kernel_size=3, padding=padding),
-            nn.BatchNorm2d(out_planes),
-            nn.ReLU(inplace=True)
-        )
+        if batch_norm == BatchNorm.FRN:
+            self.double_conv = nn.Sequential(
+                nn.Conv2d(in_planes, out_planes, kernel_size=3, padding=padding),
+                FilterResponseNorm2d(out_planes),
+                TLU(out_planes),
+                nn.Conv2d(out_planes, out_planes, kernel_size=3, padding=padding),
+                FilterResponseNorm2d(out_planes),
+                TLU(out_planes)
+            )
+        else:
+            self.double_conv = nn.Sequential(
+                nn.Conv2d(in_planes, out_planes, kernel_size=3, padding=padding),
+                nn.BatchNorm2d(out_planes),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(out_planes, out_planes, kernel_size=3, padding=padding),
+                nn.BatchNorm2d(out_planes),
+                nn.ReLU(inplace=True)
+            )
 
     def forward(self, x):
         x = self.double_conv(x)
